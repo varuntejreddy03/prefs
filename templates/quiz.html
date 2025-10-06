@@ -203,13 +203,13 @@ function endQuiz() {
 
 function openEditor() {
     if (currentQuizData) {
-        window.open(`/editor/${currentQuizData.question.id}`, '_blank');
+        window.open(`/code/${currentQuizData.question.id}`, '_blank');
     }
 }
 
 function openSolution() {
     if (currentQuizData) {
-        window.open(`/solution/${currentQuizData.question.id}`, '_blank');
+        window.open(`/answer/${currentQuizData.question.id}`, '_blank');
     }
 }
 

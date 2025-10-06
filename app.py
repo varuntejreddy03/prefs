@@ -33,13 +33,19 @@ def index():
     progress = get_basic_stats()
     return render_template('index.html', days=data, progress=progress)
 
-@app.route('/day/<int:day_num>')
+@app.route('/study/<int:day_num>')
 def day_questions(day_num):
     data = load_questions()
     day_data = next((day for day in data if day['day'] == day_num), None)
     if not day_data:
         return "Day not found", 404
     return render_template('day.html', day=day_data)
+
+# Redirect old URLs
+@app.route('/day/<int:day_num>')
+def redirect_old_day(day_num):
+    from flask import redirect, url_for
+    return redirect(url_for('day_questions', day_num=day_num), code=301)
 
 @app.route('/quiz')
 def quiz():
@@ -101,7 +107,7 @@ def next_question():
     session['current_question'] = session.get('current_question', 0) + 1
     return jsonify({'success': True})
 
-@app.route('/editor/<int:question_id>')
+@app.route('/code/<int:question_id>')
 def code_editor(question_id):
     data = load_questions()
     question = None
@@ -117,7 +123,13 @@ def code_editor(question_id):
     
     return render_template('editor.html', question=question)
 
-@app.route('/solution/<int:question_id>')
+# Redirect old URLs
+@app.route('/editor/<int:question_id>')
+def redirect_old_editor(question_id):
+    from flask import redirect, url_for
+    return redirect(url_for('code_editor', question_id=question_id), code=301)
+
+@app.route('/answer/<int:question_id>')
 def view_solution(question_id):
     data = load_questions()
     question = None
@@ -135,6 +147,12 @@ def view_solution(question_id):
     java_code = get_java_solution(question['date'], question['title'])
     
     return render_template('solution.html', question=question, java_code=java_code)
+
+# Redirect old URLs
+@app.route('/solution/<int:question_id>')
+def redirect_old_solution(question_id):
+    from flask import redirect, url_for
+    return redirect(url_for('view_solution', question_id=question_id), code=301)
 
 def get_java_solution(date, title):
     import os
