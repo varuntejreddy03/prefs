@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}Additional Problems{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="additional-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2><i class="fas fa-plus-circle"></i> Missed Questions</h2>
+                        <p class="text-muted mb-0">Java problems found in PFS folder that are not in the main schedule</p>
+                    </div>
+                    <a href="/" class="btn-back">
+                        ← Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if date_groups %}
+    <div class="additional-grid">
+        {% for group in date_groups %}
+        <div class="date-card">
+            <div class="date-header">
+                <div class="date-info">
+                    <div class="day-number">{{ group.day }}</div>
+                    <div class="date-details">
+                        <h5 class="day-title">Day {{ group.day }}</h5>
+                        <span class="date-text">{{ group.date }}</span>
+                    </div>
+                    <div class="question-count">
+                        <span class="count-number">{{ group.questions|length }}</span>
+                        <span class="count-label">Questions</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="date-content">
+                <div class="questions-list">
+                    {% for question in group.questions %}
+                    <div class="question-item">
+                        <div class="question-icon">
+                            {% if question.leetcode_link %}
+                            <i class="fas fa-external-link-alt text-success"></i>
+                            {% else %}
+                            <i class="fab fa-java text-warning"></i>
+                            {% endif %}
+                        </div>
+                        <div class="question-info">
+                            <h6 class="question-title">{{ question.title }}</h6>
+                            <span class="question-id">#{{ question.id }}</span>
+                        </div>
+                        <div class="question-actions">
+                            <a href="/day/{{ group.day }}" class="view-day-btn">
+                                <i class="fas fa-eye"></i>
+                                View Day
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="no-additional">
+        <div class="no-additional-icon">
+            <i class="fas fa-folder-open"></i>
+        </div>
+        <h4>All Questions Organized</h4>
+        <p>All questions are now properly organized in the main schedule by date.</p>
+        <a href="/" class="modern-btn modern-btn-primary">
+            <i class="fas fa-home"></i>
+            Back to Home
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.additional-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+}
+
+.btn-back {
+    background: #64748b;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background: #1e293b;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.additional-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+.date-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.date-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.date-header {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    padding: 1.5rem;
+}
+
+.date-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.day-number {
+    width: 3rem;
+    height: 3rem;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.date-details {
+    flex: 1;
+}
+
+.day-title {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.date-text {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.question-count {
+    text-align: center;
+}
+
+.count-number {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.count-label {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+}
+
+.date-content {
+    padding: 1.5rem;
+}
+
+.questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.question-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8fafc;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.question-item:hover {
+    background: #e2e8f0;
+}
+
+.question-icon {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.question-info {
+    flex: 1;
+}
+
+.question-title {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 0.9rem;
+}
+
+.question-id {
+    font-size: 0.8rem;
+    color: #64748b;
+    font-family: 'Monaco', monospace;
+}
+
+.question-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.view-day-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.view-day-btn:hover {
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.no-additional {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.no-additional-icon {
+    font-size: 3rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+.no-additional h4 {
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.no-additional p {
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.modern-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.modern-btn-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.modern-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+    .additional-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .date-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .question-item {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.5rem;
+    }
+}
+</style>
+{% endblock %}

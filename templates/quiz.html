@@ -1,0 +1,224 @@
+{% extends "base.html" %}
+
+{% block title %}Quiz Mode - Exam Helper{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div id="quiz-setup" class="card">
+            <div class="card-header bg-success text-white text-center">
+                <h4><i class="fas fa-brain"></i> Quiz Mode</h4>
+            </div>
+            <div class="card-body text-center">
+                <p class="lead">Test your knowledge with random questions!</p>
+                <div class="mb-4">
+                    <label for="questionCount" class="form-label">Number of Questions:</label>
+                    <select id="questionCount" class="form-select w-50 mx-auto">
+                        <option value="5">5 Questions</option>
+                        <option value="10" selected>10 Questions</option>
+                        <option value="15">15 Questions</option>
+                        <option value="20">20 Questions</option>
+                    </select>
+                </div>
+                <button class="btn btn-success btn-lg" onclick="startQuiz()">
+                    <i class="fas fa-play"></i> Start Quiz
+                </button>
+                <a href="/" class="btn btn-outline-secondary btn-lg ms-3">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+
+        <div id="quiz-question" class="card" style="display: none;">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Quiz in Progress</h5>
+                    <span id="progress-badge" class="badge bg-light text-dark">1/10</span>
+                </div>
+                <div class="progress mt-2" style="height: 8px;">
+                    <div id="progress-bar" class="progress-bar bg-warning" style="width: 10%; transition: width 0.3s ease;"></div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <span id="question-day" class="badge bg-secondary"></span>
+                    <span id="question-id" class="badge bg-info"></span>
+                </div>
+                <h4 id="question-title" class="card-title text-primary"></h4>
+                <p id="question-date" class="text-muted mb-3"></p>
+                
+                <div class="row g-2">
+                    <div class="col-md-6">
+                        <button id="leetcode-btn" class="btn btn-success w-100" onclick="openLeetCode()" style="display: none;">
+                            <i class="fas fa-external-link-alt"></i> Open LeetCode
+                        </button>
+                        <button id="editor-btn" class="btn btn-warning w-100" onclick="openEditor()" style="display: none;">
+                            <i class="fas fa-code"></i> Code Editor
+                        </button>
+                    </div>
+                    <div class="col-md-6">
+                        <button id="solution-btn" class="btn btn-info w-100" onclick="openSolution()">
+                            <i class="fas fa-file-code"></i> View Solution
+                        </button>
+                    </div>
+                    <div class="col-12 mt-3">
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary flex-fill" onclick="nextQuestion()">
+                                <i class="fas fa-arrow-right"></i> Next Question
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="endQuiz()">
+                                <i class="fas fa-stop"></i> End Quiz
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 p-3 bg-light rounded">
+                    <small class="text-muted">
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                        <strong>Disclaimer:</strong> Please check solution once because it's auto-created, don't blindly see answer.
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div id="quiz-complete" class="card" style="display: none;">
+            <div class="card-header bg-success text-white text-center">
+                <h4><i class="fas fa-trophy"></i> Quiz Complete!</h4>
+            </div>
+            <div class="card-body text-center">
+                <h2 id="final-score" class="text-success mb-4"></h2>
+                <p class="lead">Great job completing the quiz!</p>
+                <button class="btn btn-success btn-lg me-3" onclick="restartQuiz()">
+                    <i class="fas fa-redo"></i> Take Another Quiz
+                </button>
+                <a href="/" class="btn btn-primary btn-lg">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentQuizData = null;
+let currentLeetCodeLink = null;
+
+async function startQuiz() {
+    const count = document.getElementById('questionCount').value;
+    
+    try {
+        const response = await fetch('/api/quiz-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ count: parseInt(count) })
+        });
+        
+        const data = await response.json();
+        if (data.started) {
+            document.getElementById('quiz-setup').style.display = 'none';
+            document.getElementById('quiz-question').style.display = 'block';
+            loadNextQuestion();
+        }
+    } catch (error) {
+        showNotification('Error starting quiz: ' + error.message, 'error');
+    }
+}
+
+async function loadNextQuestion() {
+    try {
+        const response = await fetch('/api/quiz-question');
+        const data = await response.json();
+        
+        if (data.finished) {
+            showQuizComplete(data.score, data.total);
+            return;
+        }
+        
+        currentQuizData = data;
+        currentLeetCodeLink = data.question.leetcode_link;
+        
+        document.getElementById('question-title').textContent = data.question.title;
+        document.getElementById('question-day').textContent = `Day ${data.question.day}`;
+        document.getElementById('question-id').textContent = `#${data.question.id}`;
+        document.getElementById('question-date').textContent = data.question.date;
+        document.getElementById('progress-badge').textContent = `${data.current}/${data.total}`;
+        
+        const progress = (data.current / data.total) * 100;
+        document.getElementById('progress-bar').style.width = progress + '%';
+        
+        const leetcodeBtn = document.getElementById('leetcode-btn');
+        const editorBtn = document.getElementById('editor-btn');
+        
+        if (data.question.leetcode_link) {
+            leetcodeBtn.style.display = 'block';
+            editorBtn.style.display = 'none';
+        } else {
+            leetcodeBtn.style.display = 'none';
+            editorBtn.style.display = 'block';
+        }
+        
+    } catch (error) {
+        showNotification('Error loading question: ' + error.message, 'error');
+    }
+}
+
+async function nextQuestion() {
+    try {
+        await fetch('/api/next-question', { method: 'POST' });
+        loadNextQuestion();
+    } catch (error) {
+        showNotification('Error moving to next question: ' + error.message, 'error');
+    }
+}
+
+function openLeetCode() {
+    if (currentLeetCodeLink) {
+        window.open(currentLeetCodeLink, '_blank');
+    }
+}
+
+function showQuizComplete(score, total) {
+    document.getElementById('quiz-question').style.display = 'none';
+    document.getElementById('quiz-complete').style.display = 'block';
+    document.getElementById('final-score').textContent = `Completed ${total} Questions!`;
+}
+
+function restartQuiz() {
+    document.getElementById('quiz-complete').style.display = 'none';
+    document.getElementById('quiz-setup').style.display = 'block';
+}
+
+function endQuiz() {
+    document.getElementById('quiz-question').style.display = 'none';
+    document.getElementById('quiz-setup').style.display = 'block';
+    showNotification('Quiz ended', 'info');
+}
+
+function openEditor() {
+    if (currentQuizData) {
+        window.open(`/editor/${currentQuizData.question.id}`, '_blank');
+    }
+}
+
+function openSolution() {
+    if (currentQuizData) {
+        window.open(`/solution/${currentQuizData.question.id}`, '_blank');
+    }
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
+}
+</script>
+{% endblock %}

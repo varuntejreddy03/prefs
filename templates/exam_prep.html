@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Preparation - Exam Helper{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-warning text-center">
+            <h3><i class="fas fa-graduation-cap"></i> Final Exam Preparation</h3>
+            <p class="mb-0">Review all topics taught by sir • Test your knowledge • Get exam ready!</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <i class="fas fa-list-check fa-3x mb-3"></i>
+                <h5>Topic Review</h5>
+                <p class="small">Quick revision of all topics</p>
+                <button class="btn btn-light" onclick="startTopicReview()">
+                    <i class="fas fa-play"></i> Start Review
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center bg-success text-white">
+            <div class="card-body">
+                <i class="fas fa-clock fa-3x mb-3"></i>
+                <h5>Timed Practice</h5>
+                <p class="small">Exam-like timed questions</p>
+                <button class="btn btn-light" onclick="startTimedPractice()">
+                    <i class="fas fa-stopwatch"></i> Start Timer
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center bg-danger text-white">
+            <div class="card-body">
+                <i class="fas fa-brain fa-3x mb-3"></i>
+                <h5>Mock Exam</h5>
+                <p class="small">Full exam simulation</p>
+                <button class="btn btn-light" onclick="startMockExam()">
+                    <i class="fas fa-file-alt"></i> Take Exam
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-info text-white">
+                <h5><i class="fas fa-book-open"></i> All Topics Covered in Class</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for day in days %}
+                    <div class="col-12 mb-3">
+                        <div class="border-start border-4 border-primary ps-3">
+                            <h6 class="text-primary">Day {{ day.day }} - {{ day.date }}</h6>
+                            <div class="row">
+                                {% for question in day.questions %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="p-2 bg-light rounded d-flex justify-content-between align-items-center">
+                                        <span class="small">{{ question.title }}</span>
+                                        {% if question.leetcode_link %}
+                                        <a href="{{ question.leetcode_link }}" target="_blank" class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                        {% else %}
+                                        <span class="badge bg-warning">Custom</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-warning text-dark">
+                <h5><i class="fas fa-exclamation-triangle"></i> Exam Tips</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <h6><i class="fas fa-clock text-primary"></i> Time Management</h6>
+                    <ul class="small">
+                        <li>Read all questions first</li>
+                        <li>Start with easy ones</li>
+                        <li>Allocate time per question</li>
+                    </ul>
+                </div>
+                <div class="mb-3">
+                    <h6><i class="fas fa-code text-success"></i> Coding Tips</h6>
+                    <ul class="small">
+                        <li>Write clean, readable code</li>
+                        <li>Add comments for logic</li>
+                        <li>Test with sample inputs</li>
+                    </ul>
+                </div>
+                <div class="mb-3">
+                    <h6><i class="fas fa-brain text-info"></i> Problem Solving</h6>
+                    <ul class="small">
+                        <li>Understand the problem first</li>
+                        <li>Think of edge cases</li>
+                        <li>Optimize if time permits</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header bg-success text-white">
+                <h5><i class="fas fa-chart-line"></i> Your Progress</h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <h3 class="text-success">{{ days|length }}/{{ days|length }}</h3>
+                    <p class="small text-muted">Days Covered</p>
+                </div>
+                <div class="progress mb-3">
+                    <div class="progress-bar bg-success" style="width: 100%"></div>
+                </div>
+                <p class="small text-success">
+                    <i class="fas fa-check-circle"></i> Ready for Exam!
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function startTopicReview() {
+    alert('Starting topic review mode!\n\nThis will show you all topics in sequence for quick revision.');
+    window.location.href = '/';
+}
+
+function startTimedPractice() {
+    const time = prompt('Enter practice time in minutes (e.g., 30):', '30');
+    if (time) {
+        alert(`Starting ${time}-minute timed practice!\n\nTimer will start when you begin the quiz.`);
+        window.location.href = '/quiz';
+    }
+}
+
+function startMockExam() {
+    const confirm = window.confirm('Start Mock Exam?\n\nThis will be a full exam simulation with all topics.\nRecommended time: 2-3 hours');
+    if (confirm) {
+        alert('Mock Exam Starting!\n\nGood luck! 🍀');
+        window.location.href = '/quiz';
+    }
+}
+</script>
+{% endblock %}

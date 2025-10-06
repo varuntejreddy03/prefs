@@ -1,0 +1,644 @@
+{% extends "base.html" %}
+
+{% block title %}Code Editor - {{ question.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="editor-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-0">{{ question.title }}</h4>
+                        <small class="text-muted">Day {{ question.day }} • Problem #{{ question.id }}</small>
+                    </div>
+                    <a href="/day/{{ question.day }}" class="btn-back">
+                        ← Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="sidebar">
+                <div class="sidebar-section">
+                    <h6>Language</h6>
+                    <select id="language-select" class="form-select">
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="c">C</option>
+                        <option value="javascript">JavaScript</option>
+                    </select>
+                </div>
+                
+                <div class="sidebar-section">
+                    <button class="btn-primary w-100 mb-2" id="run-btn">
+                        ▶ Run Code
+                    </button>
+                    <button class="btn-secondary w-100" id="reset-btn">
+                        ↻ Reset
+                    </button>
+                </div>
+
+                <div class="sidebar-section">
+                    <h6>Notes</h6>
+                    <textarea id="solution-notes" class="form-control" rows="4" placeholder="Your approach..."></textarea>
+                </div>
+
+                <div class="sidebar-section">
+                    <h6>Complexity</h6>
+                    <input type="text" id="time-complexity" class="form-control mb-2" placeholder="Time: O(n)">
+                    <input type="text" id="space-complexity" class="form-control" placeholder="Space: O(1)">
+                </div>
+
+                <div class="sidebar-section">
+                    <button class="btn-success w-100 mb-2" onclick="saveProgress()">
+                        💾 Save Progress
+                    </button>
+                    <button class="btn-primary w-100" onclick="markSolved()">
+                        ✓ Mark Solved
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="editor-container">
+                <div class="editor-header-small">
+                    <span>Code Editor</span>
+                    <span id="current-lang" class="lang-badge">Python</span>
+                </div>
+                <textarea id="code-editor" class="code-editor"></textarea>
+            </div>
+            
+            <div class="output-container">
+                <div class="output-header">
+                    <span>Output</span>
+                </div>
+                <pre id="output" class="output">Ready to run your code...</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" class="toast-notification"></div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const questionId = {{ question.id }};
+const questionTitle = "{{ question.title }}";
+
+const templates = {
+    python: `# ${questionTitle}
+
+def solution():
+    # Write your code here
+    return "Hello World"
+
+if __name__ == "__main__":
+    result = solution()
+    print(result)`,
+    java: `// ${questionTitle}
+
+public class Solution {
+    public static void main(String[] args) {
+        System.out.println("Hello World");
+    }
+}`,
+    cpp: `// ${questionTitle}
+
+#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Hello World" << endl;
+    return 0;
+}`,
+    c: `// ${questionTitle}
+
+#include <stdio.h>
+
+int main() {
+    printf("Hello World\\n");
+    return 0;
+}`,
+    javascript: `// ${questionTitle}
+
+function solution() {
+    return "Hello World";
+}
+
+console.log(solution());`
+};
+
+function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast-notification show ${type}`;
+    
+    setTimeout(() => {
+        toast.className = 'toast-notification';
+    }, 3000);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const editor = document.getElementById('code-editor');
+    const langSelect = document.getElementById('language-select');
+    const runBtn = document.getElementById('run-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    
+    editor.value = templates.python;
+    
+    langSelect.addEventListener('change', function() {
+        const lang = this.value;
+        const langName = lang.charAt(0).toUpperCase() + lang.slice(1);
+        document.getElementById('current-lang').textContent = langName;
+        
+        const saved = localStorage.getItem(`code_${questionId}_${lang}`);
+        editor.value = saved || templates[lang];
+    });
+    
+    runBtn.addEventListener('click', function() {
+        const code = editor.value;
+        const lang = langSelect.value;
+        
+        localStorage.setItem(`code_${questionId}_${lang}`, code);
+        
+        runBtn.textContent = '⏳ Running...';
+        runBtn.disabled = true;
+        
+        const output = document.getElementById('output');
+        output.textContent = 'Executing...';
+        
+        if (lang === 'javascript') {
+            try {
+                let consoleOutput = '';
+                const originalLog = console.log;
+                console.log = function(...args) {
+                    consoleOutput += args.join(' ') + '\\n';
+                    originalLog.apply(console, args);
+                };
+                
+                eval(code);
+                console.log = originalLog;
+                
+                output.textContent = consoleOutput || 'Code executed successfully';
+                showToast('JavaScript executed successfully!', 'success');
+            } catch (error) {
+                output.textContent = 'Error: ' + error.message;
+                showToast('Execution error', 'error');
+            }
+        } else {
+            setTimeout(() => {
+                output.textContent = `${lang.toUpperCase()} code ready!
+
+Use your laptop's code editor for:
+• Better syntax highlighting
+• IntelliSense and debugging
+• Faster compilation
+
+Recommended: VS Code, IntelliJ IDEA`;
+                showToast('Use your laptop editor for better experience!');
+            }, 1000);
+        }
+        
+        setTimeout(() => {
+            runBtn.textContent = '▶ Run Code';
+            runBtn.disabled = false;
+        }, 1500);
+    });
+    
+    resetBtn.addEventListener('click', function() {
+        const lang = langSelect.value;
+        editor.value = templates[lang];
+        localStorage.removeItem(`code_${questionId}_${lang}`);
+        showToast('Code reset to template');
+    });
+    
+    setInterval(() => {
+        const lang = langSelect.value;
+        const code = editor.value;
+        if (code.trim()) {
+            localStorage.setItem(`code_${questionId}_${lang}`, code);
+        }
+    }, 10000);
+    
+    // Load saved data
+    const savedNotes = localStorage.getItem(`notes_${questionId}`);
+    if (savedNotes) document.getElementById('solution-notes').value = savedNotes;
+    
+    const savedTime = localStorage.getItem(`time_complexity_${questionId}`);
+    if (savedTime) document.getElementById('time-complexity').value = savedTime;
+    
+    const savedSpace = localStorage.getItem(`space_complexity_${questionId}`);
+    if (savedSpace) document.getElementById('space-complexity').value = savedSpace;
+    
+    if (localStorage.getItem(`solved_${questionId}`) === 'true') {
+        const solveBtn = document.querySelector('button[onclick="markSolved()"]');
+        solveBtn.innerHTML = '✅ Solved';
+        solveBtn.style.background = '#28a745';
+    }
+});
+
+function saveProgress() {
+    const notes = document.getElementById('solution-notes').value;
+    const timeComplexity = document.getElementById('time-complexity').value;
+    const spaceComplexity = document.getElementById('space-complexity').value;
+    
+    localStorage.setItem(`notes_${questionId}`, notes);
+    localStorage.setItem(`time_complexity_${questionId}`, timeComplexity);
+    localStorage.setItem(`space_complexity_${questionId}`, spaceComplexity);
+    
+    const lang = document.getElementById('language-select').value;
+    const code = document.getElementById('code-editor').value;
+    localStorage.setItem(`code_${questionId}_${lang}`, code);
+    
+    showToast('Progress saved!', 'success');
+}
+
+function markSolved() {
+    saveProgress();
+    localStorage.setItem(`solved_${questionId}`, 'true');
+    
+    const btn = event.target;
+    btn.innerHTML = '✅ Solved';
+    btn.style.background = '#28a745';
+    
+    showToast(`"${questionTitle}" marked as solved! 🎉`, 'success');
+}
+</script>
+
+<style>
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #64748b;
+    --success: #10b981;
+    --success-dark: #059669;
+    --warning: #f59e0b;
+    --danger: #ef4444;
+    --dark: #1e293b;
+    --light: #f8fafc;
+    --border: #e2e8f0;
+    --text: #334155;
+    --text-muted: #64748b;
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--text);
+    line-height: 1.6;
+    margin: 0;
+    min-height: 100vh;
+}
+
+.container-fluid {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.editor-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+}
+
+.editor-header h4 {
+    color: var(--dark);
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.btn-back {
+    background: var(--secondary);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-back:hover {
+    background: var(--dark);
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+}
+
+.sidebar {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+}
+
+.sidebar-section {
+    margin-bottom: 28px;
+}
+
+.sidebar-section:last-child {
+    margin-bottom: 0;
+}
+
+.sidebar-section h6 {
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.form-select, .form-control {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 14px;
+    background: white;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.form-select:focus, .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    transform: none;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--dark) 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow);
+}
+
+.btn-success:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.w-100 {
+    width: 100%;
+}
+
+.mb-2 {
+    margin-bottom: 12px;
+}
+
+.editor-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+}
+
+.editor-header-small {
+    background: linear-gradient(135deg, var(--dark) 0%, #0f172a 100%);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.lang-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+}
+
+.code-editor {
+    width: 100%;
+    height: 480px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', 'Menlo', monospace;
+    font-size: 14px;
+    background: #0d1117;
+    color: #e6edf3;
+    border: none;
+    padding: 24px;
+    resize: none;
+    line-height: 1.6;
+    outline: none;
+    tab-size: 4;
+}
+
+.code-editor::selection {
+    background: rgba(37, 99, 235, 0.3);
+}
+
+.output-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.output-header {
+    background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+    color: white;
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.output {
+    background: #f8fafc;
+    padding: 20px;
+    margin: 0;
+    min-height: 140px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text);
+    white-space: pre-wrap;
+    border: none;
+}
+
+.toast-notification {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    background: var(--dark);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 500;
+    transform: translateX(400px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    max-width: 350px;
+    box-shadow: var(--shadow-lg);
+    backdrop-filter: blur(10px);
+}
+
+.toast-notification.show {
+    transform: translateX(0);
+}
+
+.toast-notification.success {
+    background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+}
+
+.toast-notification.error {
+    background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+}
+
+.text-muted {
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -12px;
+}
+
+.col-md-3, .col-md-9, .col-12 {
+    padding: 0 12px;
+}
+
+.col-12 {
+    width: 100%;
+}
+
+.col-md-3 {
+    width: 25%;
+}
+
+.col-md-9 {
+    width: 75%;
+}
+
+@media (max-width: 768px) {
+    .col-md-3, .col-md-9 {
+        width: 100%;
+    }
+    
+    .sidebar {
+        margin-bottom: 24px;
+        position: static;
+    }
+    
+    .container-fluid {
+        padding: 0 16px;
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
+}
+</style>
+{% endblock %}

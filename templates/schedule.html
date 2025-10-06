@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Study Schedule - Exam Helper{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="alert alert-primary">
+            <h4><i class="fas fa-calendar-alt"></i> Your Exam Study Schedule</h4>
+            <p class="mb-0">Follow sir's teaching sequence • {{ progress.total_days }} days • Exam on {{ progress.exam_date }}</p>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="timeline">
+            {% for day in days %}
+            <div class="card mb-3 {% if loop.index <= 3 %}border-success{% elif loop.index <= 8 %}border-warning{% else %}border-danger{% endif %}">
+                <div class="card-header d-flex justify-content-between align-items-center {% if loop.index <= 3 %}bg-success text-white{% elif loop.index <= 8 %}bg-warning text-dark{% else %}bg-danger text-white{% endif %}">
+                    <div>
+                        <h5 class="mb-0">
+                            <i class="fas fa-calendar-day"></i> Day {{ day.day }} 
+                            {% if loop.index <= 3 %}
+                            <span class="badge bg-light text-success ms-2">Beginner</span>
+                            {% elif loop.index <= 8 %}
+                            <span class="badge bg-light text-warning ms-2">Intermediate</span>
+                            {% else %}
+                            <span class="badge bg-light text-danger ms-2">Advanced</span>
+                            {% endif %}
+                        </h5>
+                        <small>{{ day.date }}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="badge bg-light text-dark">{{ day.questions|length }} Topics</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h6 class="text-muted mb-3">Topics Covered:</h6>
+                            <div class="row">
+                                {% for question in day.questions %}
+                                <div class="col-md-6 mb-2">
+                                    <div class="p-2 bg-light rounded">
+                                        <small>
+                                            <i class="fas fa-book text-primary"></i> {{ question.title }}
+                                            {% if question.leetcode_link %}
+                                            <i class="fas fa-link text-success ms-1" title="LeetCode Available"></i>
+                                            {% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-grid gap-2">
+                                <a href="/day/{{ day.day }}" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-study"></i> Study Now
+                                </a>
+                                <button class="btn btn-outline-success btn-sm" onclick="markComplete({{ day.day }})">
+                                    <i class="fas fa-check"></i> Mark Complete
+                                </button>
+                            </div>
+                            <div class="mt-3 text-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock"></i> Est. 2-3 hours
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5><i class="fas fa-lightbulb"></i> Study Tips</h5>
+                <div class="row">
+                    <div class="col-md-4">
+                        <i class="fas fa-clock fa-2x mb-2"></i>
+                        <p class="small">Study 2-3 hours daily</p>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fas fa-repeat fa-2x mb-2"></i>
+                        <p class="small">Revise previous days</p>
+                    </div>
+                    <div class="col-md-4">
+                        <i class="fas fa-code fa-2x mb-2"></i>
+                        <p class="small">Practice on LeetCode</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function markComplete(day) {
+    // Simple completion tracking (you can enhance this with localStorage or backend)
+    const button = event.target;
+    button.innerHTML = '<i class="fas fa-check-circle"></i> Completed';
+    button.classList.remove('btn-outline-success');
+    button.classList.add('btn-success');
+    button.disabled = true;
+    
+    // Show success message
+    alert(`Day ${day} marked as completed! 🎉`);
+}
+</script>
+{% endblock %}

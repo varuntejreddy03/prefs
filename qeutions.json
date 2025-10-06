@@ -1,0 +1,166 @@
+[
+  {
+    "day": 0,
+    "date": "29-07-2025",
+    "questions": [
+      { "id": 201, "title": "Factorial Recursion", "leetcode_link": null },
+      { "id": 202, "title": "Fibonacci Recursion", "leetcode_link": "https://leetcode.com/problems/fibonacci-number/" },
+      { "id": 203, "title": "Staircase", "leetcode_link": "https://leetcode.com/problems/climbing-stairs/" }
+    ]
+  },
+  {
+    "day": 1,
+    "date": "30-07-2025",
+    "questions": [
+      { "id": 301, "title": "Fibonacci Variations", "leetcode_link": "https://leetcode.com/problems/fibonacci-number/" },
+      { "id": 302, "title": "Reverse String using Recursion", "leetcode_link": "https://leetcode.com/problems/reverse-string/" },
+      { "id": 303, "title": "Tribonacci Sequence", "leetcode_link": "https://leetcode.com/problems/n-th-tribonacci-number/" }
+    ]
+  },
+  {
+    "day": 2,
+    "date": "31-07-2025",
+    "questions": [
+      { "id": 310, "title": "Happy Number (HashSet)", "leetcode_link": "https://leetcode.com/problems/happy-number/" },
+      { "id": 311, "title": "Happy Number (Slow-Fast Pointers)", "leetcode_link": "https://leetcode.com/problems/happy-number/" },
+      { "id": 312, "title": "Different Ways to Add Parentheses", "leetcode_link": "https://leetcode.com/problems/different-ways-to-add-parentheses/" }
+    ]
+  },
+  {
+    "day": 3,
+    "date": "05-08-2025",
+    "questions": [
+      { "id": 318, "title": "Palindrome Check", "leetcode_link": "https://leetcode.com/problems/valid-palindrome/" }
+    ]
+  },
+  {
+    "day": 4,
+    "date": "07-08-2025",
+    "questions": [
+      { "id": 320, "title": "Binary Search Algorithm", "leetcode_link": "https://leetcode.com/problems/binary-search/" },
+      { "id": 321, "title": "Divide and Conquer Notes", "leetcode_link": null }
+    ]
+  },
+  {
+    "day": 5,
+    "date": "06-08-2025",
+    "questions": [
+      { "id": 324, "title": "Mystic Weave of Twin Scrolls", "leetcode_link": null }
+    ]
+  },
+  {
+    "day": 6,
+    "date": "07-08-2025",
+    "questions": [
+      { "id": 354, "title": "Binary Search Iterative", "leetcode_link": "https://leetcode.com/problems/binary-search/" },
+      { "id": 358, "title": "Binary Search Recursion", "leetcode_link": "https://leetcode.com/problems/binary-search/" }
+    ]
+  },
+  {
+    "day": 7,
+    "date": "12-08-2025",
+    "questions": [
+      { "id": 380, "title": "Motlu and the Last Box of Samosas", "leetcode_link": null },
+      { "id": 381, "title": "Search in 2D Matrix", "leetcode_link": "https://leetcode.com/problems/search-a-2d-matrix/" },
+      { "id": 382, "title": "Majority Element", "leetcode_link": "https://leetcode.com/problems/majority-element/" }
+    ]
+  },
+  {
+    "day": 8,
+    "date": "13-08-2025",
+    "questions": [
+      { "id": 388, "title": "A Secret Code Hidden Inside Numbers", "leetcode_link": null },
+      { "id": 389, "title": "Stable Partition", "leetcode_link": null }
+    ]
+  },
+  {
+    "day": 9,
+    "date": "14-08-2025",
+    "questions": [
+      { "id": 397, "title": "Circle Elimination Game (Josephus)", "leetcode_link": "https://leetcode.com/problems/find-the-winner-of-the-circular-game/" },
+      { "id": 398, "title": "QuickSort", "leetcode_link": null },
+      { "id": 399, "title": "Count Number of Ones in Binary Representation", "leetcode_link": "https://leetcode.com/problems/number-of-1-bits/" }
+    ]
+  },
+  {
+    "day": 10,
+    "date": "19-08-2025",
+    "questions": [
+      { "id": 442, "title": "Fixed Point Index Binary Search", "leetcode_link": null },
+      { "id": 443, "title": "Smallest Common Element in All Rows", "leetcode_link": "https://leetcode.com/problems/find-smallest-common-element-in-all-rows/" }
+    ]
+  },
+  {
+    "day": 11,
+    "date": "20-08-2025",
+    "questions": [
+      { "id": 459, "title": "Koko Eating Bananas (Brute Force)", "leetcode_link": "https://leetcode.com/problems/koko-eating-bananas/" },
+      { "id": 460, "title": "Koko Eating Bananas (Binary Search)", "leetcode_link": "https://leetcode.com/problems/koko-eating-bananas/" }
+    ]
+  },
+  {
+    "day": 12,
+    "date": "21-08-2025",
+    "questions": [
+      { "id": 465, "title": "Maximum Candies Allocated to K Children", "leetcode_link": "https://leetcode.com/problems/maximum-candies-allocated-to-k-children/" },
+      { "id": 466, "title": "Maximum Candies Allocated to K Children (Binary Search)", "leetcode_link": "https://leetcode.com/problems/maximum-candies-allocated-to-k-children/" }
+    ]
+  },
+  {
+    "day": 13,
+    "date": "01-09-2025",
+    "questions": [
+      { "id": 803, "title": "Arrange Bricks into Staircase Rows", "leetcode_link": "https://leetcode.com/problems/arranging-coins/" },
+      { "id": 804, "title": "Marble Game: Perfect Square Formation", "leetcode_link": "https://leetcode.com/problems/valid-perfect-square/" }
+    ]
+  },
+  {
+    "day": 14,
+    "date": "03-09-2025",
+    "questions": [
+      { "id": 810, "title": "1s Complement of a Binary String", "leetcode_link": null }
+    ]
+  },
+  {
+    "day": 15,
+    "date": "09-09-2025",
+    "questions": [
+      { "id": 815, "title": "Peak Element in an Array", "leetcode_link": "https://leetcode.com/problems/find-peak-element/" },
+      { "id": 816, "title": "Best Time to Buy and Sell Stock", "leetcode_link": "https://leetcode.com/problems/best-time-to-buy-and-sell-stock/" },
+      { "id": 817, "title": "Coin Change (Greedy + Non-Canonical)", "leetcode_link": "https://leetcode.com/problems/coin-change/" }
+    ]
+  },
+  {
+    "day": 16,
+    "date": "10-09-2025",
+    "questions": [
+      { "id": 820, "title": "Lemonade Change", "leetcode_link": "https://leetcode.com/problems/lemonade-change/" }
+    ]
+  },
+  {
+    "day": 17,
+    "date": "02-09-2025",
+    "questions": [
+      { "id": 901, "title": "Arrange Bricks", "leetcode_link": "https://leetcode.com/problems/arranging-coins/" },
+      { "id": 902, "title": "Perfect Squares", "leetcode_link": "https://leetcode.com/problems/valid-perfect-square/" }
+    ]
+  },
+  {
+    "day": 18,
+    "date": "10-09-2025",
+    "questions": [
+      { "id": 911, "title": "Minimum Cost", "leetcode_link": null },
+      { "id": 912, "title": "Minimum Product", "leetcode_link": null },
+      { "id": 913, "title": "Return Change", "leetcode_link": "https://leetcode.com/problems/lemonade-change/" }
+    ]
+  },
+  {
+    "day": 19,
+    "date": "24-09-2025",
+    "questions": [
+      { "id": 921, "title": "Attendance Tracker", "leetcode_link": null },
+      { "id": 922, "title": "Homogenous Substrings", "leetcode_link": null },
+      { "id": 923, "title": "Roman Numbers", "leetcode_link": null }
+    ]
+  }
+]

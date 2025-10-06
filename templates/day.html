@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Day {{ day.day }} - Exam Helper{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3><i class="fas fa-calendar-day"></i> Day {{ day.day }} Problems</h3>
+                        <p class="mb-0">{{ day.date }} • {{ day.questions|length }} problems taught in class</p>
+                    </div>
+                    <a href="/" class="btn btn-light">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white border-bottom">
+                <h5 class="mb-0 text-primary">
+                    <i class="fas fa-list-ol"></i> Problems ({{ day.questions|length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for question in day.questions %}
+                <div class="card mb-3 question-card shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-1 text-center">
+                                <div class="badge bg-primary rounded-circle" style="width: 30px; height: 30px; line-height: 18px;">
+                                    {{ loop.index }}
+                                </div>
+                            </div>
+                            <div class="col-md-7">
+                                <h6 class="card-title mb-2">
+                                    <span class="badge bg-light text-dark border me-2">#{{ question.id }}</span>
+                                    {{ question.title }}
+                                </h6>
+                                {% if question.leetcode_link %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-external-link-alt"></i> LeetCode Available
+                                </span>
+                                {% else %}
+                                <span class="badge bg-warning">
+                                    <i class="fas fa-code"></i> Custom Problem
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div class="d-grid gap-2">
+                                    {% if question.leetcode_link %}
+                                    <a href="{{ question.leetcode_link }}" target="_blank" class="btn btn-success btn-sm">
+                                        <i class="fas fa-external-link-alt"></i> Open LeetCode
+                                    </a>
+                                    {% else %}
+                                    <a href="/editor/{{ question.id }}" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-code"></i> Code Editor
+                                    </a>
+                                    {% endif %}
+                                    <a href="/solution/{{ question.id }}" class="btn btn-info btn-sm">
+                                        <i class="fas fa-file-code"></i> Solution
+                                    </a>
+                                    <button class="btn btn-outline-primary btn-sm" onclick="markStudied({{ question.id }})" id="btn-{{ question.id }}">
+                                        <i class="fas fa-check"></i> Mark Done
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3 pt-2 border-top">
+                            <small class="text-muted">
+                                <i class="fas fa-exclamation-triangle text-warning"></i>
+                                <strong>Disclaimer:</strong> Please check solution once because it's auto-created, don't blindly see answer.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <button class="btn btn-primary btn-lg me-3" onclick="practiceAll()">
+            <i class="fas fa-play"></i> Practice All
+        </button>
+        <a href="/quiz" class="btn btn-success btn-lg">
+            <i class="fas fa-brain"></i> Take Quiz
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const questions = {{ day.questions | tojson }};
+
+function practiceAll() {
+    let currentIndex = 0;
+    
+    function showNext() {
+        if (currentIndex >= questions.length) {
+            showNotification('🎉 All problems reviewed! Great job completing Day {{ day.day }}!', 'success');
+            return;
+        }
+        
+        const q = questions[currentIndex];
+        if (q.leetcode_link) {
+            window.open(q.leetcode_link, '_blank');
+        } else {
+            window.open(`/editor/${q.id}`, '_blank');
+        }
+        
+        currentIndex++;
+        setTimeout(showNext, 2000);
+    }
+    
+    showNext();
+}
+
+function markStudied(questionId) {
+    const button = document.getElementById(`btn-${questionId}`);
+    button.innerHTML = '<i class="fas fa-check-circle"></i> Done';
+    button.classList.remove('btn-outline-primary');
+    button.classList.add('btn-success');
+    button.disabled = true;
+    
+    // Save to localStorage
+    localStorage.setItem(`studied_${questionId}`, 'true');
+    
+    // Update progress
+    updateProgress();
+}
+
+function updateProgress() {
+    const total = questions.length;
+    const completed = questions.filter(q => localStorage.getItem(`studied_${q.id}`) === 'true').length;
+    
+    if (completed === total) {
+        setTimeout(() => {
+            showNotification(`🎉 Day {{ day.day }} completed! All ${total} problems marked as done!`, 'success');
+        }, 500);
+    }
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+    notification.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    notification.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
+}
+
+// Load saved progress on page load
+document.addEventListener('DOMContentLoaded', function() {
+    questions.forEach(q => {
+        if (localStorage.getItem(`studied_${q.id}`) === 'true') {
+            const button = document.getElementById(`btn-${q.id}`);
+            if (button) {
+                button.innerHTML = '<i class="fas fa-check-circle"></i> Done';
+                button.classList.remove('btn-outline-primary');
+                button.classList.add('btn-success');
+                button.disabled = true;
+            }
+        }
+    });
+    
+    updateProgress();
+});
+</script>
+{% endblock %}

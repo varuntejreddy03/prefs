@@ -1,0 +1,171 @@
+{% extends "base.html" %}
+
+{% block title %}Statistics - Exam Helper{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2><i class="fas fa-chart-bar"></i> Study Statistics</h2>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card text-center bg-primary text-white">
+            <div class="card-body">
+                <i class="fas fa-calendar-alt fa-2x mb-2"></i>
+                <h3>{{ stats.total_days }}</h3>
+                <p class="mb-0">Total Days</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center bg-success text-white">
+            <div class="card-body">
+                <i class="fas fa-question-circle fa-2x mb-2"></i>
+                <h3>{{ stats.total_questions }}</h3>
+                <p class="mb-0">Total Questions</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center bg-info text-white">
+            <div class="card-body">
+                <i class="fas fa-link fa-2x mb-2"></i>
+                <h3>{{ stats.with_leetcode }}</h3>
+                <p class="mb-0">With LeetCode</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card text-center bg-warning text-white">
+            <div class="card-body">
+                <i class="fas fa-code fa-2x mb-2"></i>
+                <h3>{{ stats.without_leetcode }}</h3>
+                <p class="mb-0">Custom Problems</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-pie"></i> Question Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="distributionChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-line"></i> Questions per Day</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="questionsChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-list"></i> Day-wise Breakdown</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Day</th>
+                                <th>Date</th>
+                                <th>Questions</th>
+                                <th>LeetCode Links</th>
+                                <th>Custom Problems</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for day in days %}
+                            <tr>
+                                <td><span class="badge bg-primary">Day {{ day.day }}</span></td>
+                                <td>{{ day.date }}</td>
+                                <td>{{ day.questions|length }}</td>
+                                <td>{{ day.questions|selectattr('leetcode_link')|list|length }}</td>
+                                <td>{{ day.questions|rejectattr('leetcode_link')|list|length }}</td>
+                                <td>
+                                    <a href="/day/{{ day.day }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12 text-center">
+        <a href="/" class="btn btn-primary btn-lg me-3">
+            <i class="fas fa-home"></i> Back to Home
+        </a>
+        <a href="/quiz" class="btn btn-success btn-lg">
+            <i class="fas fa-play"></i> Start Quiz
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Distribution Chart
+const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+new Chart(distributionCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['With LeetCode', 'Custom Problems'],
+        datasets: [{
+            data: [{{ stats.with_leetcode }}, {{ stats.without_leetcode }}],
+            backgroundColor: ['#17a2b8', '#ffc107']
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+// Questions per Day Chart
+const questionsCtx = document.getElementById('questionsChart').getContext('2d');
+new Chart(questionsCtx, {
+    type: 'bar',
+    data: {
+        labels: [{% for day in days %}'Day {{ day.day }}'{% if not loop.last %},{% endif %}{% endfor %}],
+        datasets: [{
+            label: 'Questions',
+            data: {{ stats.questions_per_day }},
+            backgroundColor: '#007bff'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

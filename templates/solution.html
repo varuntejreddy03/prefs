@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+
+{% block title %}Solution - {{ question.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-12">
+            <div class="solution-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="mb-0">{{ question.title }} - Solution</h4>
+                        <small class="text-muted">Day {{ question.day }} • Problem #{{ question.id }}</small>
+                    </div>
+                    <div>
+                        <a href="/day/{{ question.day }}" class="btn-back me-2">
+                            ← Back to Day
+                        </a>
+                        <a href="/editor/{{ question.id }}" class="btn-editor">
+                            Code Editor
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if java_code %}
+    <div class="row">
+        <div class="col-12">
+            <div class="solution-container">
+                <div class="solution-header-small">
+                    <span>Java Solution</span>
+                    <button class="copy-btn" onclick="copyCode()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <pre id="java-code" class="solution-code">{{ java_code }}</pre>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="no-solution">
+                <div class="no-solution-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h5>No Solution Available</h5>
+                <p>Java solution file not found for this problem.</p>
+                <a href="/editor/{{ question.id }}" class="modern-btn modern-btn-primary">
+                    <i class="fas fa-edit"></i>
+                    Write Your Solution
+                </a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyCode() {
+    const code = document.getElementById('java-code').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+        btn.style.background = '#10b981';
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '';
+        }, 2000);
+    });
+}
+</script>
+
+<style>
+.solution-header {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    border: 1px solid #e2e8f0;
+}
+
+.btn-back, .btn-editor {
+    background: #64748b;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-editor {
+    background: #2563eb;
+}
+
+.btn-back:hover, .btn-editor:hover {
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.solution-container {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.solution-header-small {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: white;
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.copy-btn {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+    background: rgba(255,255,255,0.25);
+}
+
+.solution-code {
+    background: #0d1117;
+    color: #e6edf3;
+    padding: 24px;
+    margin: 0;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Monaco', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    border: none;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.no-solution {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.no-solution-icon {
+    font-size: 3rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+.no-solution h5 {
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.no-solution p {
+    color: #64748b;
+    margin-bottom: 2rem;
+}
+
+.modern-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    border: none;
+    cursor: pointer;
+}
+
+.modern-btn-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+}
+
+.modern-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+</style>
+{% endblock %}
