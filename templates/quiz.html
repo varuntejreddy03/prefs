@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-12 col-md-10 col-lg-8">
         <div id="quiz-setup" class="card">
             <div class="card-header bg-success text-white text-center">
                 <h4><i class="fas fa-brain"></i> Quiz Mode</h4>
@@ -13,19 +13,21 @@
                 <p class="lead">Test your knowledge with random questions!</p>
                 <div class="mb-4">
                     <label for="questionCount" class="form-label">Number of Questions:</label>
-                    <select id="questionCount" class="form-select w-50 mx-auto">
+                    <select id="questionCount" class="form-select w-75 w-md-50 mx-auto">
                         <option value="5">5 Questions</option>
                         <option value="10" selected>10 Questions</option>
                         <option value="15">15 Questions</option>
                         <option value="20">20 Questions</option>
                     </select>
                 </div>
-                <button class="btn btn-success btn-lg" onclick="startQuiz()">
-                    <i class="fas fa-play"></i> Start Quiz
-                </button>
-                <a href="/" class="btn btn-outline-secondary btn-lg ms-3">
-                    <i class="fas fa-home"></i> Back to Home
-                </a>
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <button class="btn btn-success btn-lg" onclick="startQuiz()">
+                        <i class="fas fa-play"></i> Start Quiz
+                    </button>
+                    <a href="/" class="btn btn-outline-secondary btn-lg">
+                        <i class="fas fa-home"></i> Back to Home
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -48,26 +50,26 @@
                 <p id="question-date" class="text-muted mb-3"></p>
                 
                 <div class="row g-2">
-                    <div class="col-md-6">
+                    <div class="col-12 col-sm-6">
                         <button id="leetcode-btn" class="btn btn-success w-100" onclick="openLeetCode()" style="display: none;">
-                            <i class="fas fa-external-link-alt"></i> Open LeetCode
+                            <i class="fas fa-external-link-alt"></i> <span class="d-none d-sm-inline">Open </span>LeetCode
                         </button>
                         <button id="editor-btn" class="btn btn-warning w-100" onclick="openEditor()" style="display: none;">
-                            <i class="fas fa-code"></i> Code Editor
+                            <i class="fas fa-code"></i> <span class="d-none d-sm-inline">Code </span>Editor
                         </button>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-12 col-sm-6">
                         <button id="solution-btn" class="btn btn-info w-100" onclick="openSolution()">
-                            <i class="fas fa-file-code"></i> View Solution
+                            <i class="fas fa-file-code"></i> <span class="d-none d-sm-inline">View </span>Solution
                         </button>
                     </div>
                     <div class="col-12 mt-3">
-                        <div class="d-flex gap-2">
+                        <div class="d-flex flex-column flex-sm-row gap-2">
                             <button class="btn btn-primary flex-fill" onclick="nextQuestion()">
                                 <i class="fas fa-arrow-right"></i> Next Question
                             </button>
                             <button class="btn btn-outline-danger" onclick="endQuiz()">
-                                <i class="fas fa-stop"></i> End Quiz
+                                <i class="fas fa-stop"></i> <span class="d-none d-sm-inline">End </span>Quiz
                             </button>
                         </div>
                     </div>
@@ -89,12 +91,14 @@
             <div class="card-body text-center">
                 <h2 id="final-score" class="text-success mb-4"></h2>
                 <p class="lead">Great job completing the quiz!</p>
-                <button class="btn btn-success btn-lg me-3" onclick="restartQuiz()">
-                    <i class="fas fa-redo"></i> Take Another Quiz
-                </button>
-                <a href="/" class="btn btn-primary btn-lg">
-                    <i class="fas fa-home"></i> Back to Home
-                </a>
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                    <button class="btn btn-success btn-lg" onclick="restartQuiz()">
+                        <i class="fas fa-redo"></i> Take Another Quiz
+                    </button>
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-home"></i> Back to Home
+                    </a>
+                </div>
             </div>
         </div>
     </div>

@@ -660,34 +660,129 @@
             box-shadow: var(--shadow-lg);
         }
 
-        /* Responsive Design */
+        /* Mobile Optimizations */
         @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+
             .hero-card {
-                padding: 2rem 1rem;
+                padding: 1.5rem 1rem;
+                margin: 0 5px;
             }
 
             .hero-title {
-                font-size: 2rem;
+                font-size: 1.75rem;
             }
 
             .hero-stats {
+                flex-direction: column;
                 gap: 1rem;
+            }
+
+            .stat-divider {
+                width: 100%;
+                height: 1px;
             }
 
             .action-card {
                 flex-direction: column;
                 text-align: center;
                 gap: 1rem;
+                padding: 1.5rem;
+                margin: 0 5px;
             }
 
             .problems-grid {
                 grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 0 5px;
+            }
+
+            .day-card {
+                margin: 0;
             }
 
             .day-header {
-                flex-direction: column;
-                text-align: center;
+                padding: 1rem;
+            }
+
+            .day-content {
+                padding: 1rem;
+            }
+
+            .action-buttons {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                padding: 0 5px;
+            }
+
+            .navbar-nav {
+                flex-direction: row;
                 gap: 0.5rem;
+            }
+
+            .nav-link {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+
+            .btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .card {
+                margin-bottom: 1rem;
+            }
+
+            .search-form {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .search-input, .search-btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 1.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+
+            .action-icon {
+                font-size: 2rem;
+            }
+
+            .day-number {
+                width: 2.5rem;
+                height: 2.5rem;
+                font-size: 1rem;
+            }
+
+            .problem-count {
+                font-size: 1.25rem;
+            }
+
+            .navbar-brand {
+                font-size: 1.1rem;
+            }
+
+            .container {
+                padding: 0 8px;
+            }
+
+            .mt-4 {
+                margin-top: 1rem !important;
             }
         }
 
@@ -769,13 +864,26 @@
     </style>
 </head>
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="/"><i class="fas fa-graduation-cap"></i> Exam Helper</a>
-            <div class="navbar-nav ms-auto">
-                <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
-                <a class="nav-link" href="/quiz"><i class="fas fa-brain"></i> Quiz</a>
-                <a class="nav-link" href="/search"><i class="fas fa-search"></i> Search</a>
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-graduation-cap"></i> 
+                <span class="d-none d-sm-inline">Exam Helper</span>
+                <span class="d-inline d-sm-none">EH</span>
+            </a>
+            <div class="navbar-nav ms-auto d-flex flex-row">
+                <a class="nav-link" href="/">
+                    <i class="fas fa-home"></i> 
+                    <span class="d-none d-md-inline">Home</span>
+                </a>
+                <a class="nav-link" href="/quiz">
+                    <i class="fas fa-brain"></i> 
+                    <span class="d-none d-md-inline">Quiz</span>
+                </a>
+                <a class="nav-link" href="/search">
+                    <i class="fas fa-search"></i> 
+                    <span class="d-none d-md-inline">Search</span>
+                </a>
             </div>
         </div>
     </nav>
