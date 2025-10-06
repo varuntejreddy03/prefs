@@ -30,8 +30,8 @@
 </div>
 
 <!-- Quick Actions -->
-<div class="row mb-5">
-    <div class="col-md-6">
+<div class="row mb-4 g-3">
+    <div class="col-12 col-md-6">
         <div class="action-card stats-card">
             <div class="action-icon">
                 <i class="fas fa-code"></i>
@@ -42,7 +42,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-12 col-md-6">
         <div class="action-card search-card">
             <div class="action-icon">
                 <i class="fas fa-search"></i>
@@ -84,14 +84,14 @@
             
             <div class="day-content">
                 <div class="problems-preview">
-                    {% for question in day.questions[:3] %}
+                    {% for question in day.questions[:2] %}
                     <div class="problem-item">
                         <div class="problem-index">{{ loop.index }}</div>
                         <div class="problem-info">
                             <span class="problem-title">{{ question.title }}</span>
                             <div class="problem-type">
                                 {% if question.leetcode_link %}
-                                <span class="type-badge leetcode">LeetCode</span>
+                                <span class="type-badge leetcode">LC</span>
                                 {% else %}
                                 <span class="type-badge custom">Custom</span>
                                 {% endif %}
@@ -99,15 +99,15 @@
                         </div>
                     </div>
                     {% endfor %}
-                    {% if day.questions|length > 3 %}
+                    {% if day.questions|length > 2 %}
                     <div class="more-problems">
-                        <span>+{{ day.questions|length - 3 }} more problems</span>
+                        <span>+{{ day.questions|length - 2 }} more</span>
                     </div>
                     {% endif %}
                 </div>
                 
                 <div class="day-actions">
-                    <a href="/day/{{ day.day }}" class="modern-btn modern-btn-primary">
+                    <a href="/day/{{ day.day }}" class="study-btn">
                         <i class="fas fa-play"></i>
                         <span>Start Studying</span>
                     </a>
@@ -120,15 +120,29 @@
 
 <!-- Bottom Actions -->
 <div class="bottom-actions">
-    <div class="action-buttons">
-        <a href="/quiz" class="modern-btn modern-btn-success" style="padding: 1.5rem; width: 100%; justify-content: center;">
-            <i class="fas fa-brain"></i>
-            <span>Practice Quiz</span>
-        </a>
-        <a href="/search" class="modern-btn modern-btn-outline" style="padding: 1.5rem; width: 100%; justify-content: center;">
-            <i class="fas fa-search"></i>
-            <span>Search Problems</span>
-        </a>
+    <div class="row g-3">
+        <div class="col-12 col-sm-6">
+            <a href="/quiz" class="action-button quiz-button">
+                <div class="button-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <div class="button-content">
+                    <h5>Practice Quiz</h5>
+                    <p>Test your knowledge</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-12 col-sm-6">
+            <a href="/search" class="action-button search-button">
+                <div class="button-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="button-content">
+                    <h5>Search Problems</h5>
+                    <p>Find specific topics</p>
+                </div>
+            </a>
+        </div>
     </div>
 </div>
 {% endblock %}
